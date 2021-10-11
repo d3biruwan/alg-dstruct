@@ -1,0 +1,8 @@
+packages*
+.vs
+*Debug
+**x64
+3-Boitsov-A11.*
+!3-Boitsov-A11TEST
+/3-Boitsov-A11TEST/3-Boitsov-A11TEST.*
+pch*
