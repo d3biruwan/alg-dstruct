@@ -1,6 +1,6 @@
 #include "pch.h"
-#include<gtest/gtest.h>
-#include"Header.h"
+#include <gtest/gtest.h>
+#include "Header.h"
 
 TEST(list_createTEST, list_create_) {
 	list_t* list = list_create();
@@ -52,6 +52,9 @@ TEST(list_pushTEST, list_push_Normallist) {
 	EXPECT_EQ(1, list_push(data, &list));
 	EXPECT_EQ(data, list.tail->data);
 	EXPECT_EQ(nullptr, list.tail->next);
+	EXPECT_EQ(1, list.head->data);
+	EXPECT_EQ(2, list.head->next->data);
+	EXPECT_EQ(3, list.head->next->next->data);
 	free(list.tail);
 }
 
@@ -80,6 +83,7 @@ TEST(list_popTEST, list_pop_Normallist) {
 	list->tail = tail;
 	EXPECT_EQ(1, list_pop(list));
 	EXPECT_EQ(2, list->head->data);
+	EXPECT_EQ(2, list->tail->data);
 	EXPECT_EQ(nullptr, list->head->next);
 	free(list->head);
 	free(list);
@@ -174,6 +178,9 @@ TEST(array_pushTEST, array_push_Normallist) {
 	EXPECT_EQ(4, arr.size);
 	EXPECT_EQ(4, arr.tail);
 	EXPECT_EQ(4, arr.data[3]);
+	EXPECT_EQ(3, arr.data[2]);
+	EXPECT_EQ(2, arr.data[1]);
+	EXPECT_EQ(1, arr.data[0]);
 	free(arr.data);
 }
 
@@ -199,6 +206,8 @@ TEST(array_popTEST, array_pop_Normallist) {
 	EXPECT_EQ(2, arr.size);
 	EXPECT_EQ(1, arr.head);
 	EXPECT_EQ(0, arr.data[0]);
+	EXPECT_EQ(3, arr.data[2]);
+	EXPECT_EQ(2, arr.data[1]);
 	free(arr.data);
 }
 

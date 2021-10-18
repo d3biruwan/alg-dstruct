@@ -1,4 +1,4 @@
-#include"Header.h"
+#include "Header.h"
 
 list_t* list_create(void)
 {
@@ -14,9 +14,10 @@ list_t* list_create(void)
 
 void list_destroy(list_t* list) {
 	if (!list_is_empty(list)) {
-		while (!list_pop(list));
+		while (list_pop(list));
 	}
-	free(list);
+	if(list!=NULL)
+		free(list);
 }
 
 int list_is_empty(list_t* list) {
