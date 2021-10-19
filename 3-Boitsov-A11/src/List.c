@@ -13,10 +13,9 @@ list_t* list_create(void)
 }
 
 void list_destroy(list_t* list) {
-	if (!list_is_empty(list)) {
+	if (!list_is_empty(list))
 		while (list_pop(list));
-	}
-	if(list!=NULL)
+	if(list != NULL)
 		free(list);
 }
 
@@ -31,10 +30,8 @@ int list_push(data_t data, list_t* list) {
 	if (list == NULL)
 		return 0;
 	node_t* node = (node_t*)malloc(sizeof(node_t));
-	if (node == NULL) {
-		//printf("Memory error");
+	if (node == NULL) 
 		return 0;
-	}
 	node->data = data;
 	node->next = NULL;
 	if (list_is_empty(list)) {
