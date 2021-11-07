@@ -8,23 +8,20 @@ void* memory;
 int initialsize;
 void* head;
 void* tail;
-char direction_switch = 1;
+char directionswitch = 1;
 
-int myabs(int a)
-{
+int myabs(int a) {
 	if (a >= 0)
 		return a;
 	else
 		return a * (-1);
 }
 
-int memgetminimumsize()
-{
+int memgetminimumsize() {
 	return 2 * sizeof(int) + 2 * sizeof(void*);
 }
 
-int memgetblocksize()
-{
+int memgetblocksize() {
 	return 2 * sizeof(int) + 2 * sizeof(void*);
 }
 
@@ -32,7 +29,7 @@ int* getsize(void* block) {
 	return (int*)(block);
 }
 
-int* isUsed(void* block) {
+int* getusedflag(void* block) {
 	return (int*)((char*)block + *getsize(block) - sizeof(int));
 }
 
@@ -54,15 +51,14 @@ int meminit(void* pMemory, int size) {
 	*getsize(head) = initialsize;
 	*getnext(head) = NULL;
 	*getprev(head) = NULL;
-	*isUsed(head) = -initialsize;
+	*getusedflag(head) = -initialsize;
 	return 1;
 
 }
 
 void* headsearch(void* block, int size) {
 	void* currentblock = block;
-	while (currentblock)
-	{
+	while (currentblock) {
 		if (*getsize(currentblock) >= size + d_size)
 			return (void*)currentblock;
 		currentblock = *getnext(currentblock);
@@ -85,7 +81,7 @@ void makenewblock(void* block, int size) {
 	*getprev(newblock) = *getprev(block);
 	*getnext(newblock) = *getnext(block);
 	*getsize(newblock) = *getsize(block) - size - d_size;
-	*isUsed(newblock) = -*getsize(newblock);
+	*getusedflag(newblock) = -*getsize(newblock);
 	if (*(getprev(block)) == NULL) {
 		if (*(getnext(block)) == NULL) {
 
@@ -110,24 +106,24 @@ void makenewblock(void* block, int size) {
 	*getsize(block) = size + d_size;
 	*getnext(block) = NULL;
 	*getprev(block) = NULL;
-	*isUsed(block) = *getsize(block);
+	*getusedflag(block) = *getsize(block);
 }
 
 void* memalloc(int size) {
 	if ((size + d_size > initialsize) || (head == NULL) || (size < 0))
 		return NULL;
 	void* currentblock;
-	if (direction_switch) {
+	if (directionswitch) {
 		currentblock = head;
 		currentblock = headsearch(currentblock, size);
-		direction_switch = 0;
+		directionswitch = 0;
 		if (currentblock == NULL)
 			return NULL;
 	}
 	else {
 		currentblock = tail;
 		currentblock = tailsearch(currentblock, size);
-		direction_switch = 1;
+		directionswitch = 1;
 		if (currentblock == NULL)
 			return NULL;
 	}
@@ -156,97 +152,111 @@ void* memalloc(int size) {
 		}
 		*getnext(currentblock) = NULL;
 		*getprev(currentblock) = NULL;
-		*isUsed(currentblock) = *getsize(currentblock);
+		*getusedflag(currentblock) = *getsize(currentblock);
 	}
 	return (void*)((char*)currentblock + d_size - sizeof(int));
 }
 
-void  memfree(void* p) {
+void memfree(void* p) {
 	if (p == NULL)
 		return;
-	void* pn = (void*)((char*)p - d_size + sizeof(int));
-	if (*isUsed(pn) < 0)
+	void* block = (void*)((char*)p - d_size + sizeof(int));
+	if (*getusedflag(block) < 0)
 		return;
-	void* left = NULL;
-	void* right = NULL;
-	if ((int*)((char*)pn - 1) >= (int*)memory)
-		left = (void*)((char*)pn - myabs(*(int*)((char*)pn - sizeof(int))));
-	if ((char*)pn + *getsize(pn) < (char*)memory + initialsize)
-		right = (void*)((char*)pn + *getsize(pn));
-	*isUsed(pn) = -*getsize(pn);
-	if ((left != NULL) && (*isUsed(left) < 0)) {
-		if ((right != NULL) && (*isUsed(right) < 0)) {
-			if (*getnext(right) == NULL) {
+	void* leftblock = NULL;
+	void* rightblock = NULL;
+	char left_is_free, right_is_free;
+	if ((int*)((char*)block - 1) >= (int*)memory)
+		leftblock = (void*)((char*)block - myabs(*(int*)((char*)block - sizeof(int))));
+	if ((char*)block + *getsize(block) < (char*)memory + initialsize)
+		rightblock = (void*)((char*)block + *getsize(block));
+	*getusedflag(block) = -*getsize(block);
+	if (leftblock == NULL)
+		left_is_free = 0;
+	else
+		if (*getusedflag(leftblock) < 0)
+			left_is_free = 1;
+		else
+			left_is_free = 0;
+	if (rightblock == NULL)
+		right_is_free = 0;
+	else
+		if (*getusedflag(rightblock) < 0)
+			right_is_free = 1;
+		else
+			right_is_free = 0;
+	if (left_is_free) {
+		if (right_is_free) {
+			if (*getnext(rightblock) == NULL) {
 				tail = *getprev(tail);
 				*getnext(tail) = NULL;
 			}
 			else {
-				if (*getprev(right) == NULL) {
+				if (*getprev(rightblock) == NULL) {
 					head = *getnext(head);
 					*getprev(head) = NULL;
 				}
 				else {
-					*getnext(*getprev(right)) = *getnext(right);
-					*getprev(*getnext(right)) = *getprev(right);
+					*getnext(*getprev(rightblock)) = *getnext(rightblock);
+					*getprev(*getnext(rightblock)) = *getprev(rightblock);
 				}
 			}
-			*getnext(right) = NULL;
-			*getprev(right) = NULL;
-			*getsize(left) = *getsize(left) + *getsize(right) + *getsize(pn);
-			*isUsed(left) = -*getsize(left);
+			*getnext(rightblock) = NULL;
+			*getprev(rightblock) = NULL;
+			*getsize(leftblock) = *getsize(leftblock) + *getsize(rightblock) + *getsize(block);
+			*getusedflag(leftblock) = -*getsize(leftblock);
 		}
 		else {
-			*getsize(left) = *getsize(left) + *getsize(pn);
-			*isUsed(left) = -*getsize(left);
+			*getsize(leftblock) = *getsize(leftblock) + *getsize(block);
+			*getusedflag(leftblock) = -*getsize(leftblock);
 		}
 	}
 	else {
-		if ((right != NULL) && (*isUsed(right) < 0)) {
-			*getprev(pn) = *getprev(right);
-			*getnext(pn) = *getnext(right);
-			if (*getnext(right) == NULL) {
-				if (*getprev(right) == NULL) {
-					head = pn;
-					tail = pn;
+		if (right_is_free) {
+			*getprev(block) = *getprev(rightblock);
+			*getnext(block) = *getnext(rightblock);
+			if (*getnext(rightblock) == NULL) {
+				if (*getprev(rightblock) == NULL) {
+					head = block;
+					tail = block;
 				}
 				else {
-					tail = pn;
-					*getnext(*getprev(right)) = pn;
+					tail = block;
+					*getnext(*getprev(rightblock)) = block;
 				}
 			}
 			else {
-				if (*getprev(right) == NULL) {
-					head = pn;
-					*getprev(*getnext(right)) = pn;
+				if (*getprev(rightblock) == NULL) {
+					head = block;
+					*getprev(*getnext(rightblock)) = block;
 				}
 				else {
-					*getnext(*getprev(right)) = pn;
-					*getprev(*getnext(right)) = pn;
+					*getnext(*getprev(rightblock)) = block;
+					*getprev(*getnext(rightblock)) = block;
 				}
 			}
-			*getnext(right) = NULL;
-			*getprev(right) = NULL;
-			*getsize(pn) = *getsize(pn) + *getsize(right);
-			*isUsed(pn) = -*getsize(pn);
+			*getnext(rightblock) = NULL;
+			*getprev(rightblock) = NULL;
+			*getsize(block) = *getsize(block) + *getsize(rightblock);
+			*getusedflag(block) = -*getsize(block);
 		}
 		else {
 			if (head == NULL) {
-				head = pn;
-				tail = pn;
+				head = block;
+				tail = block;
 				return;
 			}
-			*getnext(tail) = pn;
-			*getprev(pn) = tail;
-			tail = pn;
+			*getnext(tail) = block;
+			*getprev(block) = tail;
+			tail = block;
 		}
 	}
 }
 
 void memdone() {
 	void* currentblock = memory;
-	while ((char*)currentblock < (char*)memory + initialsize)
-	{
-		if (*getsize(currentblock) > 0)
+	while ((char*)currentblock < (char*)memory + initialsize) {
+		if (*getusedflag(currentblock) > 0)
 			fprintf(stderr, "MEMORY LEAK:\tBlock 0x%p; size: %i bytes.\n", currentblock, *getsize(currentblock));
 		currentblock = (void*)((char*)currentblock + *getsize(currentblock));
 	}
