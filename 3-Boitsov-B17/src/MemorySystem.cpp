@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include"memallocator.h"
 
-#define d_size (2 * sizeof(int) + 2 * sizeof(void*))
+#define dsize (2 * sizeof(int) + 2 * sizeof(void*))
 
 
 void* memory;
@@ -42,7 +42,7 @@ void** getprev(void* block) {
 }
 
 int meminit(void* pMemory, int size) {
-	if ((pMemory == NULL) || (size <= d_size))
+	if ((pMemory == NULL) || (size <= dsize))
 		return 0;
 	memory = pMemory;
 	initialsize = size;
@@ -59,7 +59,7 @@ int meminit(void* pMemory, int size) {
 void* headsearch(void* block, int size) {
 	void* currentblock = block;
 	while (currentblock) {
-		if (*getsize(currentblock) >= size + d_size)
+		if (*getsize(currentblock) >= size + dsize)
 			return (void*)currentblock;
 		currentblock = *getnext(currentblock);
 	}
@@ -69,7 +69,7 @@ void* headsearch(void* block, int size) {
 void* tailsearch(void* block, int size) {
 	void* currentblock = block;
 	while (currentblock) {
-		if (*getsize(currentblock) >= size + d_size)
+		if (*getsize(currentblock) >= size + dsize)
 			return (void*)currentblock;
 		currentblock = *getprev(currentblock);
 	}
@@ -77,10 +77,10 @@ void* tailsearch(void* block, int size) {
 }
 
 void makenewblock(void* block, int size) {
-	void* newblock = (void*)((char*)block + size + d_size);
+	void* newblock = (void*)((char*)block + size + dsize);
 	*getprev(newblock) = *getprev(block);
 	*getnext(newblock) = *getnext(block);
-	*getsize(newblock) = *getsize(block) - size - d_size;
+	*getsize(newblock) = *getsize(block) - size - dsize;
 	*getusedflag(newblock) = -*getsize(newblock);
 	if (*(getprev(block)) == NULL) {
 		if (*(getnext(block)) == NULL) {
@@ -103,14 +103,14 @@ void makenewblock(void* block, int size) {
 			*getprev(*getnext(block)) = newblock;
 		}
 	}
-	*getsize(block) = size + d_size;
+	*getsize(block) = size + dsize;
 	*getnext(block) = NULL;
 	*getprev(block) = NULL;
 	*getusedflag(block) = *getsize(block);
 }
 
 void* memalloc(int size) {
-	if ((size + d_size > initialsize) || (head == NULL) || (size < 0))
+	if ((size + dsize > initialsize) || (head == NULL) || (size < 0))
 		return NULL;
 	void* currentblock;
 	if (directionswitch) {
@@ -127,7 +127,7 @@ void* memalloc(int size) {
 		if (currentblock == NULL)
 			return NULL;
 	}
-	if (*getsize(currentblock) > size + 2 * d_size)
+	if (*getsize(currentblock) > size + 2 * dsize)
 		makenewblock(currentblock, size);
 	else {
 		if (*getprev(currentblock) == NULL) {
@@ -154,39 +154,39 @@ void* memalloc(int size) {
 		*getprev(currentblock) = NULL;
 		*getusedflag(currentblock) = *getsize(currentblock);
 	}
-	return (void*)((char*)currentblock + d_size - sizeof(int));
+	return (void*)((char*)currentblock + dsize - sizeof(int));
 }
 
 void memfree(void* p) {
 	if (p == NULL)
 		return;
-	void* block = (void*)((char*)p - d_size + sizeof(int));
+	void* block = (void*)((char*)p - dsize + sizeof(int));
 	if (*getusedflag(block) < 0)
 		return;
 	void* leftblock = NULL;
 	void* rightblock = NULL;
-	char left_is_free, right_is_free;
+	char leftisfree, rightisfree;
 	if ((int*)((char*)block - 1) >= (int*)memory)
 		leftblock = (void*)((char*)block - myabs(*(int*)((char*)block - sizeof(int))));
 	if ((char*)block + *getsize(block) < (char*)memory + initialsize)
 		rightblock = (void*)((char*)block + *getsize(block));
 	*getusedflag(block) = -*getsize(block);
 	if (leftblock == NULL)
-		left_is_free = 0;
+		leftisfree = 0;
 	else
 		if (*getusedflag(leftblock) < 0)
-			left_is_free = 1;
+			leftisfree = 1;
 		else
-			left_is_free = 0;
+			leftisfree = 0;
 	if (rightblock == NULL)
-		right_is_free = 0;
+		rightisfree = 0;
 	else
 		if (*getusedflag(rightblock) < 0)
-			right_is_free = 1;
+			rightisfree = 1;
 		else
-			right_is_free = 0;
-	if (left_is_free) {
-		if (right_is_free) {
+			rightisfree = 0;
+	if (leftisfree) {
+		if (rightisfree) {
 			if (*getnext(rightblock) == NULL) {
 				tail = *getprev(tail);
 				*getnext(tail) = NULL;
@@ -212,7 +212,7 @@ void memfree(void* p) {
 		}
 	}
 	else {
-		if (right_is_free) {
+		if (rightisfree) {
 			*getprev(block) = *getprev(rightblock);
 			*getnext(block) = *getnext(rightblock);
 			if (*getnext(rightblock) == NULL) {
