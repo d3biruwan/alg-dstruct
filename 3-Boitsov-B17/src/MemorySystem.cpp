@@ -58,7 +58,7 @@ int meminit(void* pMemory, int size) {
 
 void* headsearch(void* block, int size) {
 	void* currentblock = block;
-	while (currentblock) {
+	while (currentblock!=NULL) {
 		if (*getsize(currentblock) >= size + dsize)
 			return (void*)currentblock;
 		currentblock = *getnext(currentblock);
@@ -68,7 +68,7 @@ void* headsearch(void* block, int size) {
 
 void* tailsearch(void* block, int size) {
 	void* currentblock = block;
-	while (currentblock) {
+	while (currentblock!=NULL) {
 		if (*getsize(currentblock) >= size + dsize)
 			return (void*)currentblock;
 		currentblock = *getprev(currentblock);
