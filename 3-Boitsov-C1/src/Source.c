@@ -35,14 +35,14 @@ int stackpop(stack* Q) {
     return 0;
 }
 
-void stackdestroy(stack* stack) {
-    node_t* currentnode = stack->top;
+void stackdestroy(stack* Q) {
+    node_t* currentnode = Q->top;
     while (currentnode != NULL) {
         node_t* freenode = currentnode;
         currentnode = currentnode->next;
         free(freenode);
     }
-    free(stack);
+    free(Q);
 }
 
 graph* createbasegraph(int size) {

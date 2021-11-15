@@ -31,7 +31,7 @@ extern "C" {
     int stackisempty(stack* Q);
     int stackpush(stack* Q, int vertex);
     int stackpop(stack* Q);
-    void stackdestroy(stack* stack);
+    void stackdestroy(stack* Q);
     graph* createbasegraph(int size);
     void graphdestroy(graph* g);
     graph* readgraph(FILE* f);
