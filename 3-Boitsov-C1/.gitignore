@@ -1,0 +1,6 @@
+*Debug
+.vs
+packages*
+**x64
+3-Boitsov-C1**
+/stresstest/stresstest.*
