@@ -1,169 +1,167 @@
 #include"Header.h" 
 
-stack* stackinit() {
-    stack* Q = (stack*)malloc(sizeof(stack));
-    if (Q == NULL)
+stack_t* stackinit() {
+    stack_t* stack = (stack_t*)malloc(sizeof(stack_t));
+    if (stack == NULL)
         return NULL;
-    Q->top = NULL;
-    return Q;
+    stack->top = NULL;
+    return stack;
 }
 
-int stackisempty(stack* Q) {
-    if (Q->top == NULL)
+int stackisempty(stack_t* stack) {
+    if (stack->top == NULL)
         return 1;
     else
         return 0;
 }
 
-int stackpush(stack* Q, int vertex) {
-    node_t* node = (node_t*)malloc(sizeof(node_t));
-    if (node == NULL)
+int stackpush(stack_t* stack , int vertex) {
+    node_t* newnode = (node_t*)malloc(sizeof(node_t));
+    if (newnode == NULL)
         return 0;
-    node->data = vertex;
-    node->next = Q->top;
-    Q->top = node;
+    newnode->data = vertex;
+    newnode->next = stack->top;
+    stack->top = newnode;
     return 1;
 }
 
-int stackpop(stack* Q) {
-    if (!stackisempty(Q)) {
-        node_t* node = Q->top;
-        Q->top = Q->top->next;
+int stackpop(stack_t* stack) {
+    if (!stackisempty(stack)) {
+        node_t* node = stack->top;
+        stack->top = stack->top->next;
         free(node);
         return 1;
     }
     return 0;
 }
 
-void stackdestroy(stack* Q) {
-    node_t* currentnode = Q->top;
+void stackdestroy(stack_t* stack) {
+    node_t* currentnode = stack->top;
     while (currentnode != NULL) {
         node_t* freenode = currentnode;
         currentnode = currentnode->next;
         free(freenode);
     }
-    free(Q);
+    free(stack);
 }
 
-graph* createbasegraph(int size) {
-
-    graph* g = (graph*)malloc(sizeof(graph));
-    if (g == NULL)
+graph_t* createbasegraph(int size) {
+    graph_t* graph = (graph_t*)malloc(sizeof(graph_t));
+    if (graph == NULL)
         return NULL;
-    g->size = size;
-    neighbours* adjarr = (neighbours*)malloc(sizeof(neighbours) * size);
-    if (adjarr == NULL)
-        return NULL;
-    for (int i = 0; i < size; i++) {
-        adjarr[i].size = 0;
-        adjarr[i].neighboursarray = NULL;
+    graph->size = size;
+    neighbours_t* adjacencyarray = (neighbours_t*)malloc(sizeof(neighbours_t) * size);
+    if (adjacencyarray == NULL) {
+        free(graph);
+        return NULL;   
     }
-    g->adjacencyarray = adjarr;
-    return g;
+    for (int i = 0; i < size; i++) {
+        adjacencyarray[i].size = 0;
+        adjacencyarray[i].neighboursarray = NULL;
+    }
+    graph->adjacencyarray = adjacencyarray;
+    return graph;
 }
 
-void graphdestroy(graph* g) {
-    if (g == NULL)
+void graphdestroy(graph_t* graph) {
+    if (graph == NULL)
         return;
-    for (int i = 0; i < g->size; i++)
-        if (g->adjacencyarray[i].neighboursarray != NULL)
-            free(g->adjacencyarray[i].neighboursarray);
-    free(g->adjacencyarray);
-    free(g);
+    for (int i = 0; i < graph->size; i++)
+        if (graph->adjacencyarray[i].neighboursarray != NULL)
+            free(graph->adjacencyarray[i].neighboursarray);
+    free(graph->adjacencyarray);
+    free(graph);
 }
 
-graph* readgraph(FILE* f) {
+graph_t* readgraph(FILE* file) {
     int size, vertex;
-    fscanf(f, "%d", &size);
-    graph* g = createbasegraph(size);
-    if (g == NULL)
+    fscanf(file, "%d", &size);
+    graph_t* graph = createbasegraph(size);
+    if (graph == NULL)
         return NULL;
     for (int i = 0; i < size; i++) {
-        fscanf(f, "%d", &vertex);
-        int currentsize = g->adjacencyarray[i].size;
-        while ((!feof(f)) && (fgetc(f) == ' ')) {
-            g->adjacencyarray[i].size += 1;
+        fscanf(file, "%d", &vertex);
+        int currentsize = graph->adjacencyarray[i].size;
+        while ((!feof(file)) && (fgetc(file) == ' ')) {
+            graph->adjacencyarray[i].size += 1;
             currentsize++;
-            int* temp = g->adjacencyarray[i].neighboursarray;
-            temp = (int*)realloc(temp, sizeof(int) * g->adjacencyarray[i].size);
+            int* temp = graph->adjacencyarray[i].neighboursarray;
+            temp = (int*)realloc(temp, sizeof(int) * graph->adjacencyarray[i].size);
             if (temp == NULL) {
-                graphdestroy(g);
+                graphdestroy(graph);
                 return NULL;
             }
-            g->adjacencyarray[i].neighboursarray = temp;
-            fscanf(f, "%d", &g->adjacencyarray[i].neighboursarray[currentsize - 1]);
-            g->adjacencyarray[g->adjacencyarray[i].neighboursarray[currentsize - 1]].size += 1;
-            int* adjvertexneighbours = g->adjacencyarray[g->adjacencyarray[i].neighboursarray[currentsize - 1]].neighboursarray;
-            int adjvertexsize = g->adjacencyarray[g->adjacencyarray[i].neighboursarray[currentsize - 1]].size;
+            graph->adjacencyarray[i].neighboursarray = temp;
+            fscanf(file, "%d", &graph->adjacencyarray[i].neighboursarray[currentsize - 1]);
+            graph->adjacencyarray[graph->adjacencyarray[i].neighboursarray[currentsize - 1]].size += 1;
+            int* adjvertexneighbours = graph->adjacencyarray[graph->adjacencyarray[i].neighboursarray[currentsize - 1]].neighboursarray;
+            int adjvertexsize = graph->adjacencyarray[graph->adjacencyarray[i].neighboursarray[currentsize - 1]].size;
             temp = (int*)realloc(adjvertexneighbours, sizeof(int) * adjvertexsize);
             if (temp == NULL) {
-                graphdestroy(g);
+                graphdestroy(graph);
                 return NULL;
             }
-            g->adjacencyarray[g->adjacencyarray[i].neighboursarray[currentsize - 1]].neighboursarray = temp;
-            g->adjacencyarray[g->adjacencyarray[i].neighboursarray[currentsize - 1]].neighboursarray[adjvertexsize - 1] = vertex;
+            graph->adjacencyarray[graph->adjacencyarray[i].neighboursarray[currentsize - 1]].neighboursarray = temp;
+            graph->adjacencyarray[graph->adjacencyarray[i].neighboursarray[currentsize - 1]].neighboursarray[adjvertexsize - 1] = vertex;
         }
     }
-    return g;
+    return graph;
 }
 
-int DFS(FILE* f, graph* g) {
-    if (g == NULL)
+int depthfirstsearch(FILE* file, graph_t* graph) {
+    if (graph == NULL)
         return 0;
-    stack* Q = stackinit();
-    if (Q == NULL) {
-        stackdestroy(Q);
+    stack_t* stack = stackinit();
+    if (stack == NULL) 
         return 0;
-    }
     int currentvertex = 0;
-    int size = g->size;
+    int size = graph->size;
     if (size == 0) {
-        stackdestroy(Q);
+        stackdestroy(stack);
         return 0;
     }
     char* visitflag = (char*)malloc(size);
     if (visitflag == NULL) {
-        stackdestroy(Q);
+        stackdestroy(stack);
         return 0;
     }
     visitflag[0] = 1;
-    fprintf(f, "%d ", 0);
+    fprintf(file, "%d ", 0);
     for (int i = 1; i < size; i++)
         visitflag[i] = 0;
-    for (int i = g->adjacencyarray[currentvertex].size - 1; i >= 0; i--)
-        if (!stackpush(Q, g->adjacencyarray[currentvertex].neighboursarray[i])) {
+    for (int i = graph->adjacencyarray[currentvertex].size - 1; i >= 0; i--)
+        if (!stackpush(stack, graph->adjacencyarray[currentvertex].neighboursarray[i])) {
             free(visitflag);
-            stackdestroy(Q);
+            stackdestroy(stack);
             return 0;
         }
-    while (!stackisempty(Q)) {
-        currentvertex = Q->top->data;
-        stackpop(Q);
+    while (!stackisempty(stack)) {
+        currentvertex = stack->top->data;
+        stackpop(stack);
         if (!visitflag[currentvertex]) {
-            fprintf(f, "%d ", currentvertex);
+            fprintf(file, "%d ", currentvertex);
             visitflag[currentvertex] = 1;
-            for (int i = g->adjacencyarray[currentvertex].size - 1; i >= 0; i--)
-                if (!stackpush(Q, g->adjacencyarray[currentvertex].neighboursarray[i])) {
+            for (int i = graph->adjacencyarray[currentvertex].size - 1; i >= 0; i--)
+                if (!stackpush(stack, graph->adjacencyarray[currentvertex].neighboursarray[i])) {
                     free(visitflag);
-                    stackdestroy(Q);
+                    stackdestroy(stack);
                     return 0;
                 }
         }
     }
     free(visitflag);
-    stackdestroy(Q);
+    stackdestroy(stack);
     return 1;
 }
 
 int lab(void) {
-    graph* g = readgraph(stdin);
-    if (g == NULL)
+    graph_t* graph = readgraph(stdin);
+    if (graph == NULL)
         return 1;
-    if (!DFS(stdout, g)) {
-        graphdestroy(g);
+    if (!depthfirstsearch(stdout, graph)) {
+        graphdestroy(graph);
         return 1;
     }
-    graphdestroy(g);
+    graphdestroy(graph);
     return 0;
 }
-

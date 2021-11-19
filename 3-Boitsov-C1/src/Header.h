@@ -11,12 +11,12 @@ extern "C" {
     typedef struct {
         int* neighboursarray;
         int size;
-    } neighbours;
+    } neighbours_t;
 
     typedef struct {
-        neighbours* adjacencyarray;
+        neighbours_t* adjacencyarray;
         int size;
-    }   graph;
+    }   graph_t;
 
     typedef struct node_t {
         int data;
@@ -25,17 +25,17 @@ extern "C" {
 
     typedef struct {
         node_t* top;
-    }stack;
+    }stack_t;
 
-    stack* stackinit();
-    int stackisempty(stack* Q);
-    int stackpush(stack* Q, int vertex);
-    int stackpop(stack* Q);
-    void stackdestroy(stack* Q);
-    graph* createbasegraph(int size);
-    void graphdestroy(graph* g);
-    graph* readgraph(FILE* f);
-    int DFS(FILE* f, graph* g);
+    stack_t* stackinit();
+    int stackisempty(stack_t* stack);
+    int stackpush(stack_t* stack, int vertex);
+    int stackpop(stack_t* stack);
+    void stackdestroy(stack_t* stack);
+    graph_t* createbasegraph(int size);
+    void graphdestroy(graph_t* graph);
+    graph_t* readgraph(FILE* file);
+    int depthfirstsearch(FILE* file, graph_t* graph);
     int lab(void);
 
 #ifdef __cplusplus
