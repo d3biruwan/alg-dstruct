@@ -74,7 +74,7 @@ void graphdestroy(graph_t* graph) {
 }
 
 graph_t* readgraph(FILE* file) {
-    int size, vertex;
+    int size,vertex;
     fscanf(file, "%d", &size);
     graph_t* graph = createbasegraph(size);
     if (graph == NULL)
