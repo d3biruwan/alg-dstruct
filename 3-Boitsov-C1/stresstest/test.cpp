@@ -21,8 +21,8 @@ TEST(stress_test, graphinit) {
 	fprintf(file, "%d\n", size);
 	for (int i = 0; i < size; i++) {
 		fprintf(file, "%d", i);
-		for (int j= i+1; j < size; j++) 
-			fprintf(file, " %d", j);	
+		for (int j = i + 1; j < size; j++)
+			fprintf(file, " %d", j);
 		fprintf(file, "\n");
 	}
 	fclose(file);
