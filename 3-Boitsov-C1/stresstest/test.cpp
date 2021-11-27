@@ -10,8 +10,8 @@ PC configuration:
 	Used memory: around 702 MB*/
 
 #include "pch.h"
-#include<gtest/gtest.h>
-#include"Header.h"
+#include <gtest/gtest.h>
+#include "Header.h"
 #define NUMBER_OF_NODES 4000;
 
 TEST(stress_test, graphinit) {

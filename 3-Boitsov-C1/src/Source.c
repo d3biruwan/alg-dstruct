@@ -1,4 +1,4 @@
-#include"Header.h" 
+#include "Header.h" 
 
 stack_t* stackinit() {
 	stack_t* stack = (stack_t*)malloc(sizeof(stack_t));
