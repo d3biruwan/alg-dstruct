@@ -11,12 +11,12 @@ extern "C" {
 	typedef struct {
 		int* neighboursarray;
 		int size;
-	} neighbours_t;
+	}neighbours_t;
 
 	typedef struct {
 		neighbours_t* adjacencyarray;
 		int size;
-	}   graph_t;
+	}graph_t;
 
 	typedef struct node_t {
 		int data;
