@@ -10,8 +10,8 @@ PC configuration:
 	Used memory: around 75 MB*/
 
 #include "pch.h"
-#include<gtest/gtest.h>
-#include"../src/Header.h"
+#include <gtest/gtest.h>
+#include "../src/Header.h"
 
 #define NODES 2000
 #define COLOURS 2000
@@ -27,7 +27,7 @@ TEST(stress_test, graph_init) {
 	fprintf(input, "%d %d\n", NODES, COLOURS);
 	for (int j = 1; j <= 2000; j++) {
 		for (int k = 1; k <= 2000; k++) {
-			if ((k != 1) && ((k - 1) != j)&&!((k==2000)&&(j==2000)))
+			if ((k != 1) && ((k - 1) != j) && !((k == 2000) && (j == 2000)))
 				fprintf(input, " ");
 			if (k == j)
 				continue;
@@ -66,7 +66,7 @@ TEST(func_tests, example_test) {
 	output = fopen("output.txt", "r");
 	char res[100];
 	fgets(res, 100, output);
-	EXPECT_EQ(strcmp(res, "1 2 3 "),0);
+	EXPECT_EQ(strcmp(res, "1 2 3 "), 0);
 	fclose(output);
 }
 

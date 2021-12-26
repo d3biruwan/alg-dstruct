@@ -1,4 +1,4 @@
-#include"Header.h"
+#include "Header.h"
 
 int read_graph(vertex_t** priority_list, colour_t** colours, int* size, int* k, FILE* file) {
 	//int size,k;
