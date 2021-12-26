@@ -187,24 +187,38 @@ int* graph_coloring(vertex_t** priority_list, colour_t** colours, int size, int 
 	return coloring;
 }
 
-int lab_solution(FILE* input_file, FILE* output_file) {
+int lab_solution(const char* input_file, const char* output_file) {
+	FILE* input = fopen(input_file, "r");
+	if (input == NULL) {
+		printf("Unable to open the input file");
+		return 0;
+	}
 	int size, k;
 	vertex_t* priority_list = NULL;
 	colour_t* colours = NULL;
-	int read = read_graph(&priority_list, &colours, &size, &k, input_file);
+	int read = read_graph(&priority_list, &colours, &size, &k, input);
 	if (read == 0) {
-		fprintf(output_file, "Unable to read the graph\n");
+		fprintf(stdout, "Unable to read the graph\n");
+		fclose(input);
+		return 0;
+	}
+	fclose(input);
+	FILE* output = fopen(output_file, "w");
+	if (output == NULL) {
+		printf("Unable to open the output file");
 		return 0;
 	}
 	int* coloring = graph_coloring(&priority_list, &colours, size, k);
 	if (coloring == NULL) {
-		fprintf(output_file, "0");
+		fprintf(output, "0");
+		fclose(output);
 		return 0;
 	}
 	for (int i = 0; i < size; i++)
-		fprintf(output_file, "%d ", coloring[i]);
+		fprintf(output, "%d ", coloring[i]);
 	destroy_priority_list(&priority_list, size);
 	destroy_colours_array(&colours, k);
+	fclose(output);
 	return 1;
 }
 

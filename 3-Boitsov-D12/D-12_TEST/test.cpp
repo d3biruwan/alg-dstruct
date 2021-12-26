@@ -39,13 +39,7 @@ TEST(stress_test, graph_init) {
 }
 
 TEST(stress_test, test) {
-	FILE* input = fopen("stress_input.txt", "r");
-	ASSERT_NE(nullptr, input);
-	FILE* output = fopen("stress_output.txt", "w");
-	ASSERT_NE(nullptr, output);
-	EXPECT_EQ(1, lab_solution(input, output));
-	fclose(input);
-	fclose(output);
+	EXPECT_EQ(1, lab_solution("stress_input.txt", "stress_output.txt"));
 }
 
 
@@ -56,14 +50,9 @@ TEST(func_tests, example_test) {
 	ASSERT_NE(nullptr, input);
 	fprintf(input, "3 3\n2 3\n1 3\n1 2");
 	fclose(input);
-	input = fopen("input.txt", "r");
-	ASSERT_NE(nullptr, input);
-	FILE* output = fopen("output.txt", "w");
+	EXPECT_EQ(1, lab_solution("input.txt", "output.txt"));
+	FILE* output = fopen("output.txt", "r");
 	ASSERT_NE(nullptr, output);
-	EXPECT_EQ(1, lab_solution(input, output));
-	fclose(input);
-	fclose(output);
-	output = fopen("output.txt", "r");
 	char res[100];
 	fgets(res, 100, output);
 	EXPECT_EQ(strcmp(res, "1 2 3 "), 0);
@@ -75,14 +64,9 @@ TEST(func_tests, not_enough_colours) {
 	ASSERT_NE(nullptr, input);
 	fprintf(input, "2 1\n2\n1");
 	fclose(input);
-	input = fopen("input.txt", "r");
-	ASSERT_NE(nullptr, input);
-	FILE* output = fopen("output.txt", "w");
+	EXPECT_EQ(0, lab_solution("input.txt", "output.txt"));
+	FILE* output = fopen("output.txt", "r");
 	ASSERT_NE(nullptr, output);
-	EXPECT_EQ(0, lab_solution(input, output));
-	fclose(input);
-	fclose(output);
-	output = fopen("output.txt", "r");
 	char res[100];
 	fgets(res, 100, output);
 	EXPECT_EQ(strcmp(res, "0"), 0);
@@ -94,14 +78,9 @@ TEST(func_tests, line_graph_2_colors) {
 	ASSERT_NE(nullptr, input);
 	fprintf(input, "8 2\n2\n1 3\n2 4\n3 5\n4 6\n5 7\n6 8\n7");
 	fclose(input);
-	input = fopen("input.txt", "r");
-	ASSERT_NE(nullptr, input);
-	FILE* output = fopen("output.txt", "w");
+	EXPECT_EQ(1, lab_solution("input.txt", "output.txt"));
+	FILE* output = fopen("output.txt", "r");
 	ASSERT_NE(nullptr, output);
-	EXPECT_EQ(1, lab_solution(input, output));
-	fclose(input);
-	fclose(output);
-	output = fopen("output.txt", "r");
 	char res[100];
 	fgets(res, 100, output);
 	EXPECT_EQ(strcmp(res, "2 1 2 1 2 1 2 1 "), 0);
@@ -113,14 +92,9 @@ TEST(func_tests, 3_nodes_2_colors) {
 	ASSERT_NE(nullptr, input);
 	fprintf(input, "3 2\n2 3\n1 3\n1 2");
 	fclose(input);
-	input = fopen("input.txt", "r");
-	ASSERT_NE(nullptr, input);
-	FILE* output = fopen("output.txt", "w");
+	EXPECT_EQ(0, lab_solution("input.txt", "output.txt"));
+	FILE* output = fopen("output.txt", "r");
 	ASSERT_NE(nullptr, output);
-	EXPECT_EQ(0, lab_solution(input, output));
-	fclose(input);
-	fclose(output);
-	output = fopen("output.txt", "r");
 	char res[100];
 	fgets(res, 100, output);
 	EXPECT_EQ(strcmp(res, "0"), 0);
@@ -132,14 +106,9 @@ TEST(func_tests, 3_nodes_3_colors) {
 	ASSERT_NE(nullptr, input);
 	fprintf(input, "4 3\n2 3\n1 3 4\n1 2 4\n2 3");
 	fclose(input);
-	input = fopen("input.txt", "r");
-	ASSERT_NE(nullptr, input);
-	FILE* output = fopen("output.txt", "w");
+	EXPECT_EQ(1, lab_solution("input.txt", "output.txt"));
+	FILE* output = fopen("output.txt", "r");
 	ASSERT_NE(nullptr, output);
-	EXPECT_EQ(1, lab_solution(input, output));
-	fclose(input);
-	fclose(output);
-	output = fopen("output.txt", "r");
 	char res[100];
 	fgets(res, 100, output);
 	EXPECT_EQ(strcmp(res, "3 1 2 3 "), 0);
@@ -151,14 +120,9 @@ TEST(func_tests, 4_nodes_3_colors) {
 	ASSERT_NE(nullptr, input);
 	fprintf(input, "4 3\n2 3 4\n1 3 4\n1 2 4\n1 2 3");
 	fclose(input);
-	input = fopen("input.txt", "r");
-	ASSERT_NE(nullptr, input);
-	FILE* output = fopen("output.txt", "w");
+	EXPECT_EQ(0, lab_solution("input.txt", "output.txt"));
+	FILE* output = fopen("output.txt", "r");
 	ASSERT_NE(nullptr, output);
-	EXPECT_EQ(0, lab_solution(input, output));
-	fclose(input);
-	fclose(output);
-	output = fopen("output.txt", "r");
 	char res[100];
 	fgets(res, 100, output);
 	EXPECT_EQ(strcmp(res, "0"), 0);
@@ -170,14 +134,9 @@ TEST(func_tests, 4_nodes_4_colors) {
 	ASSERT_NE(nullptr, input);
 	fprintf(input, "4 4\n2 3 4\n1 3 4\n1 2 4\n1 2 3");
 	fclose(input);
-	input = fopen("input.txt", "r");
-	ASSERT_NE(nullptr, input);
-	FILE* output = fopen("output.txt", "w");
+	EXPECT_EQ(1, lab_solution("input.txt", "output.txt"));
+	FILE* output = fopen("output.txt", "r");
 	ASSERT_NE(nullptr, output);
-	EXPECT_EQ(1, lab_solution(input, output));
-	fclose(input);
-	fclose(output);
-	output = fopen("output.txt", "r");
 	char res[100];
 	fgets(res, 100, output);
 	EXPECT_EQ(strcmp(res, "1 2 3 4 "), 0);

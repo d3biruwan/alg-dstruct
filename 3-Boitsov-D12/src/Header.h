@@ -31,9 +31,9 @@ extern "C" {
 	void vertex_sort(vertex_t** priority_list, vertex_t vertex);
 	void colours_sort(colour_t** colours, colour_t colour);
 	void initial_sort(vertex_t** priority_list, int size);
-	void destroy_priority_list(vertex_t** priority_list, int size); \
-		int* graph_coloring(vertex_t** priority_list, colour_t** colours, int size, int k);
-	int lab_solution(FILE* input_file, FILE* output_file);
+	void destroy_priority_list(vertex_t** priority_list, int size);
+	int* graph_coloring(vertex_t** priority_list, colour_t** colours, int size, int k);
+	int lab_solution(const char* input_file, const char* output_file);
 
 #ifdef __cplusplus
 }
