@@ -81,12 +81,27 @@ node_t* balance(node_t* p) {
 node_t* insert(node_t* p, int key, int data) {
 	if (!p)
 		return create_node(key,data);
-	if (p->key == key)
+	if (p->key == key) {
+		p->data = data;
 		return p;
+	}
 	if (key < p->key)
 		p->left = insert(p->left, key, data);
 	if (key > p->key)
 		p->right = insert(p->right, key, data);
+	return balance(p);
+}
+
+
+node_t* find_max(node_t* p) {
+	return p->right ? find_max(p->right) : p;
+}
+
+
+node_t* remove_max(node_t* p) {
+	if (!p->right)
+		return p->left;
+	p->right = remove_max(p->right);
 	return balance(p);
 }
 
@@ -193,23 +208,23 @@ void set_keys(node_t* p, int val) {
 	}	
 }
 
-node_t* merge_balancing(node_t* prev_branch, node_t* left_tree, node_t* cur_branch, int data, int key) {
+node_t* merge_balancing(node_t* prev_branch, node_t* left_tree, node_t* cur_branch, node_t* rotate_point) {
 	if (height(cur_branch) - height(left_tree) > 1) 
-		cur_branch=merge_balancing(cur_branch, left_tree, cur_branch->left, data, key);
+		cur_branch=merge_balancing(cur_branch, left_tree, cur_branch->left, rotate_point);
 	else {
 		node_t* temp_node = cur_branch;
-		node_t* new_node = create_node(key, data);
-		new_node->height = height(cur_branch) + 1;
-		new_node->left = left_tree;
-		new_node->right = temp_node;
+		rotate_point->height = height(cur_branch) + 1;
+		rotate_point->left = left_tree;
+		rotate_point->right = temp_node;
 		if(prev_branch)
-			prev_branch->left = new_node;
+			prev_branch->left = rotate_point;
 	}
 	if (prev_branch)
 		return balance(prev_branch);
 	else
 		return cur_branch;
 }
+
 
 node_t* merge(node_t* p, node_t* q) {
 	if (!p)
@@ -218,14 +233,9 @@ node_t* merge(node_t* p, node_t* q) {
 		return p;
 	node_t* right_tree = height(p) > height(q) ? p : q;
 	node_t* left_tree = (right_tree == p) ? q : p;
-	node_t* temp = left_tree;
-	while (temp->right)
-		temp = temp->right;
-	set_keys(right_tree, temp->key);
-	int left_key = temp->key;
-	int left_data = temp->data;
-	delete_key(left_tree, left_key);
-	return merge_balancing(NULL, left_tree, right_tree, left_data, left_key);
+	node_t* rotate_point = find_max(left_tree);
+	remove_max(left_tree);
+	return merge_balancing(NULL, left_tree, right_tree, rotate_point);
 }
 
 
