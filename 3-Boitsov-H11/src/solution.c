@@ -80,7 +80,7 @@ node_t* balance(node_t* p) {
 
 node_t* insert(node_t* p, int key, int data) {
 	if (!p)
-		return create_node(key,data);
+		return create_node(key, data);
 	if (p->key == key) {
 		p->data = data;
 		return p;
@@ -130,7 +130,7 @@ node_t* delete_key(node_t* p, int key) {
 		node_t* q = p->left;
 		node_t* r = p->right;
 		free(p);
-		if (!r) 
+		if (!r)
 			return q;
 		node_t* min = find_min(r);
 		min->right = remove_min(r);
@@ -142,13 +142,13 @@ node_t* delete_key(node_t* p, int key) {
 
 
 node_t* delete_data(node_t* p, int data) {
-	if (!p) 
+	if (!p)
 		return NULL;
 	if (data == p->data) {
 		node_t* q = p->left;
 		node_t* r = p->right;
 		free(p);
-		if (!r) 
+		if (!r)
 			return q;
 		node_t* min = find_min(r);
 		min->right = remove_min(r);
@@ -167,10 +167,10 @@ node_t* search_data(node_t* p, int data) {
 	if (data == p->data)
 		return p;
 	node_t* q = search_data(p->left, data);
-	if ((q)&&(q->data == data))
+	if ((q) && (q->data == data))
 		return q;
 	node_t* r = search_data(p->right, data);
-	if ((r)&&(r->data == data)) 
+	if ((r) && (r->data == data))
 		return r;
 	return NULL;
 }
@@ -202,21 +202,21 @@ void destroy_tree(node_t* p) {
 
 void set_keys(node_t* p, int val) {
 	if (p) {
-		p->key += val+1;
+		p->key += val + 1;
 		set_keys(p->left, val);
 		set_keys(p->right, val);
-	}	
+	}
 }
 
 node_t* merge_balancing(node_t* prev_branch, node_t* left_tree, node_t* cur_branch, node_t* rotate_point) {
-	if (height(cur_branch) - height(left_tree) > 1) 
-		cur_branch=merge_balancing(cur_branch, left_tree, cur_branch->left, rotate_point);
+	if (height(cur_branch) - height(left_tree) > 1)
+		cur_branch = merge_balancing(cur_branch, left_tree, cur_branch->left, rotate_point);
 	else {
 		node_t* temp_node = cur_branch;
 		rotate_point->height = height(cur_branch) + 1;
 		rotate_point->left = left_tree;
 		rotate_point->right = temp_node;
-		if(prev_branch)
+		if (prev_branch)
 			prev_branch->left = rotate_point;
 	}
 	if (prev_branch)
@@ -256,7 +256,7 @@ int test(node_t* p) {
 		case 'a':
 			p = insert(p, key, 1);
 			break;
-		default: 
+		default:
 			destroy_tree(p);
 			return 0;
 		}
@@ -267,7 +267,7 @@ int test(node_t* p) {
 
 
 int main() {
-	node_t* p=NULL;
+	node_t* p = NULL;
 	test(p);
 	return 0;
 }
