@@ -216,10 +216,10 @@ node_t* merge_balancing(node_t* prev_branch, node_t* left_tree, node_t* cur_bran
 		rotate_point->height = height(cur_branch) + 1;
 		rotate_point->left = left_tree;
 		rotate_point->right = temp_node;
-		if (prev_branch) {
+		if (prev_branch) 
 			prev_branch->left = rotate_point;
+		else
 			return rotate_point;
-		}
 	}
 	if (prev_branch)
 		return balance(prev_branch);
