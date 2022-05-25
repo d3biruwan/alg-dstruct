@@ -95,7 +95,7 @@ int find_node(node_t* tree, int key)
 }
 
 
-node_t* Root(node_t* node)
+node_t* find_root(node_t* node)
 {
 	node_t* cur = node;
 	while (cur->parent)
@@ -106,7 +106,7 @@ node_t* Root(node_t* node)
 }
 
 
-void LeafInsert(node_t* node, int key, node_t* pointer)
+void leaf_insert(node_t* node, int key, node_t* pointer)
 {
 	if (key > node->key[0])
 	{
@@ -136,7 +136,7 @@ node_t* insert_node(node_t* tree, int key, node_t* pointer)
 	}
 	if (!insert_node->full)
 	{
-		LeafInsert(insert_node, key, pointer);
+		leaf_insert(insert_node, key, pointer);
 		insert_node->full = 1;
 		return tree;
 	}
@@ -150,7 +150,7 @@ node_t* insert_node(node_t* tree, int key, node_t* pointer)
 				destroy_tree(tree);
 				return NULL;
 			}
-			LeafInsert(insert_node, key, pointer);
+			leaf_insert(insert_node, key, pointer);
 			return split_parent(insert_node, insert_node->key[1]);
 		}
 		else if (key < insert_node->key[1])
@@ -161,7 +161,7 @@ node_t* insert_node(node_t* tree, int key, node_t* pointer)
 				destroy_tree(tree);
 				return NULL;
 			}
-			LeafInsert(insert_node, key, pointer);
+			leaf_insert(insert_node, key, pointer);
 			return split_parent(insert_node, key);
 		}
 		else
@@ -225,7 +225,7 @@ node_t* split_parent(node_t* son, int key)
 			if (!next)
 			{
 				destroy_tree(son->son[2]);
-				destroy_tree(Root(node));
+				destroy_tree(find_root(node));
 				return NULL;
 			}
 			node->full = 0;
@@ -245,7 +245,7 @@ node_t* split_parent(node_t* son, int key)
 			if (!next)
 			{
 				destroy_tree(son->son[2]);
-				destroy_tree(Root(node));
+				destroy_tree(find_root(node));
 				return NULL;
 			}
 			node->full = 0;
@@ -262,7 +262,7 @@ node_t* split_parent(node_t* son, int key)
 			if (!next)
 			{
 				destroy_tree(son->son[2]);
-				destroy_tree(Root(node));
+				destroy_tree(find_root(node));
 				return NULL;
 			}
 			node->full = 0;
@@ -275,7 +275,7 @@ node_t* split_parent(node_t* son, int key)
 			return split_parent(node, old_key);
 		}
 	}
-	return Root(node);
+	return find_root(node);
 }
 
 
@@ -382,7 +382,7 @@ node_t* merge_tree(node_t* left, node_t* right)
 				leftParent->key[1] = lmax;
 				leftParent->son[2] = right;
 				leftParent->full = 1;
-				return Root(leftParent);
+				return find_root(leftParent);
 			}
 			else
 			{
@@ -410,7 +410,7 @@ node_t* merge_tree(node_t* left, node_t* right)
 				rightParent->key[0] = lmax;
 				rightParent->son[0] = left;
 				rightParent->full = 1;
-				return Root(rightParent);
+				return find_root(rightParent);
 			}
 			else
 			{
