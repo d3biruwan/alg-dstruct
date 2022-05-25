@@ -149,26 +149,6 @@ node_t* delete_key(node_t* p, int key) {
 }
 
 
-node_t* delete_data(node_t* p, int data) {
-	if (!p)
-		return NULL;
-	if (data == p->data) {
-		node_t* q = p->left;
-		node_t* r = p->right;
-		free(p);
-		if (!r)
-			return q;
-		node_t* min = find_min(r);
-		min->right = remove_min(r);
-		min->left = q;
-		return balance(min);
-	}
-	node_t* q = delete_data(p->left, data);
-	node_t* r = delete_data(p->right, data);
-	return balance(p);
-}
-
-
 node_t* search_data(node_t* p, int data) {
 	if (!p)
 		return NULL;
@@ -181,6 +161,16 @@ node_t* search_data(node_t* p, int data) {
 	if ((r) && (r->data == data))
 		return r;
 	return NULL;
+}
+
+
+node_t* delete_data(node_t* p, int data) {
+	node_t* tmp = search_data(p, data);
+	if (!tmp) {
+		return p;
+	}
+	p = delete_key(p, tmp->key);
+	return p;
 }
 
 
@@ -207,6 +197,7 @@ void destroy_tree(node_t* p) {
 		free(p);
 	}
 }
+ 
 
 void set_keys(node_t* p, int val) {
 	if (p) {
@@ -216,6 +207,7 @@ void set_keys(node_t* p, int val) {
 	}
 }
 
+
 node_t* merge_balancing(node_t* prev_branch, node_t* left_tree, node_t* cur_branch, node_t* rotate_point) {
 	if (height(cur_branch) - height(left_tree) > 1)
 		cur_branch = merge_balancing(cur_branch, left_tree, cur_branch->left, rotate_point);
@@ -224,13 +216,15 @@ node_t* merge_balancing(node_t* prev_branch, node_t* left_tree, node_t* cur_bran
 		rotate_point->height = height(cur_branch) + 1;
 		rotate_point->left = left_tree;
 		rotate_point->right = temp_node;
-		if (prev_branch)
+		if (prev_branch) {
 			prev_branch->left = rotate_point;
+			return rotate_point;
+		}
 	}
 	if (prev_branch)
 		return balance(prev_branch);
 	else
-		return rotate_point;
+		return cur_branch;
 }
 
 
@@ -251,18 +245,24 @@ int test(node_t* p) {
 	node_t* temp;
 	char buffer[16];
 	char a;
-	int key;
+	int data;
 	while (fgets(buffer, 16, stdin)) {
-		sscanf(buffer, "%c %d", &a, &key);
+		sscanf(buffer, "%c %d", &a, &data);
 		switch (a) {
 		case 'f':
-			temp = search_key(p, key);
+			temp = search_data(p, data);
+			if (temp && temp->data == data)
+				printf("yes\n");
+			else
+				printf("no\n");
 			break;
 		case 'r':
-			p = delete_key(p, key);
+			p = delete_data(p, data);
 			break;
 		case 'a':
-			p = data_insert(p, key, 0);
+			temp = search_data(p, data);
+			if(!temp)
+				p = data_insert(p, data, 0);
 			break;
 		default:
 			destroy_tree(p);
