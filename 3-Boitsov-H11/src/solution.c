@@ -93,6 +93,14 @@ node_t* insert(node_t* p, int key, int data) {
 }
 
 
+node_t* data_insert(node_t* p, int data, int max_key) {
+	if (!p)
+		return create_node(max_key + 1, data);
+	p->right = data_insert(p->right, data, p->key);
+	return balance(p);
+}
+
+
 node_t* find_max(node_t* p) {
 	return p->right ? find_max(p->right) : p;
 }
@@ -222,7 +230,7 @@ node_t* merge_balancing(node_t* prev_branch, node_t* left_tree, node_t* cur_bran
 	if (prev_branch)
 		return balance(prev_branch);
 	else
-		return cur_branch;
+		return rotate_point;
 }
 
 
@@ -254,7 +262,7 @@ int test(node_t* p) {
 			p = delete_key(p, key);
 			break;
 		case 'a':
-			p = insert(p, key, 1);
+			p = data_insert(p, key, 0);
 			break;
 		default:
 			destroy_tree(p);
